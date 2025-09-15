@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>트윗 랜덤 추첨기</title>
+</head>
+<body>
+    <h1>트윗 랜덤 추첨기</h1>
+    <form id="winnerForm">
+        <label>트윗 URL: <input type="text" id="tweet_url" required></label><br><br>
+        <label>몇 명 뽑을까요? <input type="number" id="num_winners" value="1" required></label><br><br>
+        <button type="submit">추첨</button>
+    </form>
+
+    <h2>결과</h2>
+    <ul id="result"></ul>
+
+    <script>
+        const form = document.getElementById("winnerForm");
+        const resultEl = document.getElementById("result");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            resultEl.innerHTML = "로딩 중...";
+
+            const tweet_url = document.getElementById("tweet_url").value;
+            const num_winners = document.getElementById("num_winners").value;
+
+            try {
+                const res = await fetch("/get_winners", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({tweet_url, num_winners})
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    resultEl.innerHTML = `총 ${data.total_rt}명이 리트윗했습니다.<br>`;
+                    data.winners.forEach(user => {
+                        const li = document.createElement("li");
+                        li.textContent = user;
+                        resultEl.appendChild(li);
+                    });
+                } else {
+                    resultEl.innerHTML = "Error: " + JSON.stringify(data.error);
+                }
+            } catch (err) {
+                resultEl.innerHTML = "Error: " + err;
+            }
+        });
+    </script>
+</body>
+</html>
