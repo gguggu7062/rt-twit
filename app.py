@@ -1,16 +1,15 @@
-from flask import Flask, request, jsonify
-import requests
-import re
-import random
-import os
+from flask import Flask, request, jsonify, render_template
+import requests, re, random, os
 from dotenv import load_dotenv
 
-load_dotenv()  # .env 파일 읽기
+load_dotenv()  # 로컬 테스트용
 
 app = Flask(__name__)
-
-# Bearer Token 불러오기
 bearer_token = os.environ.get("BEARER_TOKEN")
+
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 @app.route("/get_winners", methods=["POST"])
 def get_winners():
@@ -40,13 +39,9 @@ def get_winners():
         users = resp_data.get("data", [])
         all_users.extend(users)
 
-        if len(all_users) >= 200:
-            all_users = all_users[:200]
-            break
-
         meta = resp_data.get("meta", {})
         next_token = meta.get("next_token")
-        if not next_token:
+        if not next_token or len(all_users) >= 200:
             break
 
     if n > len(all_users):
