@@ -7,10 +7,12 @@ load_dotenv()  # 로컬 테스트용
 app = Flask(__name__)
 bearer_token = os.environ.get("BEARER_TOKEN")
 
+# 루트 경로: 브라우저 접속 시 HTML 페이지 렌더링
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html")  # index.html이 프론트 페이지일 경우
 
+# RT 랜덤 추첨 API
 @app.route("/get_winners", methods=["POST"])
 def get_winners():
     data = request.json
