@@ -10,7 +10,8 @@ bearer_token = os.environ.get("BEARER_TOKEN")
 # 루트 경로: 브라우저 접속 시 HTML 페이지 렌더링
 @app.route("/")
 def home():
-    return render_template("index.html")  # index.html이 프론트 페이지일 경우
+    return render_template("index.html")  # templates 폴더 안 index.html
+
 
 # RT 랜덤 추첨 API
 @app.route("/get_winners", methods=["POST"])
